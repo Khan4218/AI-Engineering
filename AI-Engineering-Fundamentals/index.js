@@ -71,3 +71,6 @@ function renderReport(output) {
     report.textContent = output
     outputArea.style.display = 'flex'
 }
+
+
+
