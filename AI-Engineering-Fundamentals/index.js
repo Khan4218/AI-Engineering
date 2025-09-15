@@ -41,7 +41,7 @@ async function fetchStockData() {
     loadingArea.style.display = 'flex'
     try {
         const stockData = await Promise.all(tickersArr.map(async (ticker) => {
-            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${process.env.POLYGON_API_KEY}`
+            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=uDU4vASLduMt6InLvzijlRoKtgYncclX`
             const response = await fetch(url)
             const data = await response.text()
             const status = await response.status
@@ -60,8 +60,38 @@ async function fetchStockData() {
 }
 
 async function fetchReport(data) {
-    /** AI goes here **/
+  const messages = [
+    {
+      role: 'system',
+      content: 'You are a trading guru...'
+    },
+    {
+      role: 'user',
+      content: data
+    }
+  ];
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer YOUR_API_KEY`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: messages,
+        max_tokens: 300
+      })
+    });
+    const result = await response.json();
+    renderReport(result.choices[0].message.content);
+  } catch (err) {
+    loadingArea.innerText = 'Unable to access AI. Please refresh and try again';
+    console.error(err);
+  }
 }
+
 
 function renderReport(output) {
     loadingArea.style.display = 'none'
